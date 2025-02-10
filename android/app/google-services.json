@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "68640334836",
+    "project_id": "lock-7a5c7",
+    "storage_bucket": "lock-7a5c7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:68640334836:android:b10c4ae90cf130022a0fa1",
+        "android_client_info": {
+          "package_name": "com.anandkamma.lock"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "68640334836-p56othbsu90spi53ci1npt3m1f3182on.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.anandkamma.lock",
+            "certificate_hash": "19840b5ee44745d2978760432d23ead6da6b42fc"
+          }
+        },
+        {
+          "client_id": "68640334836-co89ttfd8sfitq7qh963f18db18n69a1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCv4rfJkKqkvEwccWVPl-PgzZuPO_s5tdU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "68640334836-co89ttfd8sfitq7qh963f18db18n69a1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "68640334836-33jb5pff3jeoimlbhlv73m4m4mnldsrg.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.anandkamma.lock"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
