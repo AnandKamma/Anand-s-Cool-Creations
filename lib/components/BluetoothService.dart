@@ -34,44 +34,40 @@ class BluetoothServ {
       ValueNotifier(false); // Default: OFF
   Timer? _rssiTimer; // Store the timer reference
 
-
   int? scanRetryCount;
 
-  Future<String?> getUserESP32ID()async{
-    User? user= FirebaseAuth.instance.currentUser;
-    if (user == null){
+  Future<String?> getUserESP32ID() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
       print("❌ User not logged in.");
       return null;
     }
 
-try{
-  //Query Firestore for the house that the user is a member of
-  QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-      .collection('houses')
-      .where('members', arrayContains: user.uid)
-      .limit(1) // Get only the first matched house
-      .get();
-  if (querySnapshot.docs.isEmpty) return null;
-  DocumentSnapshot houseDoc = querySnapshot.docs.first;
-  String esp32ID =houseDoc['esp32_id'];// Return the ESP32 ID for this house
-  print("✅ ESP32 ID Found: $esp32ID");
-  return esp32ID; // Return the ESP32 ID for this house
-}catch(e){
-  print("❌ Error fetching ESP32 ID: $e");
-  return null;
-
-}
-
+    try {
+      //Query Firestore for the house that the user is a member of
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('houses')
+          .where('members', arrayContains: user.uid)
+          .limit(1) // Get only the first matched house
+          .get();
+      if (querySnapshot.docs.isEmpty) return null;
+      DocumentSnapshot houseDoc = querySnapshot.docs.first;
+      String esp32ID =
+          houseDoc['esp32_id']; // Return the ESP32 ID for this house
+      print("✅ ESP32 ID Found: $esp32ID");
+      return esp32ID; // Return the ESP32 ID for this house
+    } catch (e) {
+      print("❌ Error fetching ESP32 ID: $e");
+      return null;
+    }
   }
   //
-
 
   void bluetooth() async {
     int scanRetryCount = 0;
     const int scanMaxRetries = 10;
 
     while (scanRetryCount < scanMaxRetries) {
-
       String? targetLockID = await getUserESP32ID();
       if (targetLockID == null) {
         print("Error: No ESP32 assigned for this user.");
@@ -100,12 +96,11 @@ try{
         // Listen for scan results
         scanSubscription = FlutterBluePlus.scanResults.listen((results) async {
           for (ScanResult result in results) {
-            String deviceName= result.device.name;
+            String deviceName = result.device.name;
 
             if (deviceName == targetLockID) {
               print('✅ Target device found: $deviceName');
               targetDevice = result.device;
-
 
               // Stop scanning and cancel subscription
               await FlutterBluePlus.stopScan();
@@ -173,13 +168,15 @@ try{
 
       device.connectionState.listen((state) {
         if (state == BluetoothConnectionState.connected) {
-          if (!isConnectedNotifier.value) { // Prevent unnecessary updates
+          if (!isConnectedNotifier.value) {
+            // Prevent unnecessary updates
             isConnectedNotifier.value = true;
             print('✅ Connection Established with ${device.name}');
             monitorConnectionState(device);
           }
         } else {
-          if (isConnectedNotifier.value) { // Prevent unnecessary updates
+          if (isConnectedNotifier.value) {
+            // Prevent unnecessary updates
             isConnectedNotifier.value = false;
             print('🚫 Disconnected from ${device.name}');
           }
@@ -287,7 +284,6 @@ try{
   }
 
   Future<void> sendCommand(String command) async {
-
     if (writableCharacteristic != null) {
       try {
         await writableCharacteristic!
@@ -369,7 +365,7 @@ try{
         } else {
           print("Already unlocked. No action needed.");
         }
-      } else if(rssi<-90) {
+      } else if (rssi < -90) {
         print("$rssi < -90, checking lock state...");
         if (!isCurrentlyLocked) {
           print("Auto-triggering slider to lock...");
@@ -384,76 +380,92 @@ try{
   }
 
   void toggleRSSIMonitoring(ActionSliderController sliderController,
-      Function(ActionSliderController) handleSuccess) async{bool newState = !isRSSIMonitoringActive.value;
-  isRSSIMonitoringActive.value = newState;
+      Function(ActionSliderController) handleSuccess) async {
+    bool newState = !isRSSIMonitoringActive.value;
+    isRSSIMonitoringActive.value = newState;
 
-  // ✅ Fetch houseID from SharedPreferences
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String? houseID = prefs.getString('houseID');
+    // ✅ Fetch houseID from SharedPreferences
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? houseID = prefs.getString('houseID');
 
-  if (houseID == null) {
-    print("❌ No houseID found. Cannot update RSSI state.");
-    return;
+    if (houseID == null) {
+      print("❌ No houseID found. Cannot update RSSI state.");
+      return;
+    }
+
+    // ✅ Update Firestore state
+    LockStateDatabase lockStateDatabase = LockStateDatabase();
+    lockStateDatabase.updateRSSIMonitoringState(houseID, newState);
+
+    // ✅ Use newState directly instead of re-toggling
+    if (newState) {
+      print("✅ Starting RSSI Monitoring...");
+      startMonitoringRSSI(sliderController, handleSuccess);
+    } else {
+      print("🛑 Stopping RSSI Monitoring...");
+      _rssiTimer?.cancel(); // ✅ Stop timer immediately
+      _rssiTimer = null;
+    }
   }
 
-  // ✅ Update Firestore state
-  LockStateDatabase lockStateDatabase = LockStateDatabase();
-  lockStateDatabase.updateRSSIMonitoringState(houseID, newState);
-
-  // ✅ Use newState directly instead of re-toggling
-  if (newState) {
-    print("✅ Starting RSSI Monitoring...");
-    startMonitoringRSSI(sliderController, handleSuccess);
-  } else {
-    print("🛑 Stopping RSSI Monitoring...");
-    _rssiTimer?.cancel(); // ✅ Stop timer immediately
-    _rssiTimer = null;
-  }
-  }
-
-  void startMonitoringRSSI(ActionSliderController sliderController,Function(ActionSliderController)handleSuccess){
+  void startMonitoringRSSI(ActionSliderController sliderController,
+      Function(ActionSliderController) handleSuccess) {
     if (_rssiTimer != null) return; // ✅ Prevent multiple timers
     _rssiTimer?.cancel();
-    _rssiTimer= Timer.periodic(Duration(seconds: 5), (timer)async{
+    _rssiTimer = Timer.periodic(Duration(seconds: 5), (timer) async {
       if (!isRSSIMonitoringActive.value) {
         print("🚫 RSSI Monitoring Disabled.");
         timer.cancel();
-        _rssiTimer=null;
+        _rssiTimer = null;
         return;
       }
-      if(targetDevice==null||!isConnectedNotifier.value){
+      if (targetDevice == null || !isConnectedNotifier.value) {
         print("Device not connected. Stopping RSSI monitoring.");
         timer.cancel();
-        _rssiTimer=null;
+        _rssiTimer = null;
         return;
       }
-      try{
+      try {
         int rssi = await targetDevice!.readRssi();
         print("Live RSSI: $rssi dBm");
         testReadRssi(targetDevice!, sliderController, handleSuccess);
-      }catch(e){
+      } catch (e) {
         print(" Error reading RSSI: $e");
         timer.cancel();
-        _rssiTimer=null;
+        _rssiTimer = null;
       }
     });
   }
 
-  void handleTap(bool isConnected,ActionSliderController sliderController, void Function(ActionSliderController) handleSuccess){
-
+  void handleTap(bool isConnected, ActionSliderController sliderController,
+      void Function(ActionSliderController) handleSuccess) {
     if (isConnected) {
       toggleRSSIMonitoring(sliderController, handleSuccess);
     } else {
-      print(
-          '🔄 Connection lost! Trying to reconnect...');
+      print('🔄 Connection lost! Trying to reconnect...');
       if (targetDevice == null) {
         resetRetries();
       } else {
-        print(
-            "⚠️ No target device. Scan and connect first.");
+        print("⚠️ No target device. Scan and connect first.");
       }
     }
   }
 
+  Future<List<String>> getAllESP32IDs() async {
+    try {
+      QuerySnapshot querySnapshot =
+      await FirebaseFirestore.instance.collection('houses').get();
+
+      List<String> esp32IDs = querySnapshot.docs
+          .map((doc) => doc['esp32_id'].toString()) // Extract ESP32 ID from each house
+          .toList();
+
+      print("✅ Retrieved all ESP32 IDs: $esp32IDs");
+      return esp32IDs;
+    } catch (e) {
+      print("❌ Error fetching all ESP32 IDs: $e");
+      return [];
+    }
+  }
 
 }

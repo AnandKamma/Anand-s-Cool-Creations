@@ -152,7 +152,7 @@ final kSettingsFeedbackContainerDecoration = InputDecoration(
   ),
 );
 final kSettingsElevatedButtonTextStyle = TextStyle(
-    fontSize: 16,
+    fontSize: 18,
     fontFamily: 'Lato',
     fontWeight: FontWeight.bold,
     color: kContactUsPageElevatedButtonTextColor);

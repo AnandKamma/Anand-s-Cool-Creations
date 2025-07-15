@@ -67,6 +67,25 @@ class ColoriseText extends StatelessWidget {
     );
   }
 }
+class FadeToCalibrationRoute extends PageRouteBuilder {
+  final Widget page;
+  FadeToCalibrationRoute({required this.page})
+      : super(
+    transitionDuration: Duration(milliseconds: 400),
+    reverseTransitionDuration: Duration(milliseconds: 300),
+    pageBuilder: (context, animation, secondaryAnimation) => page,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      return FadeTransition(
+        opacity: CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeInOut,
+        ),
+        child: child,
+      );
+    },
+  );
+}
+
 
 class RotateWords extends StatelessWidget {
   final String? label1;
@@ -100,6 +119,7 @@ class RotateWords extends StatelessWidget {
         )
       ],
     );
+
   }
 }
 

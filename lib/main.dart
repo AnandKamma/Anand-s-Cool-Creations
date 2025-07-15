@@ -1,10 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:lock/components/Todoey_models/task_data1.dart';
+import 'package:lock/rough.dart';
 import 'package:lock/screens/AdminPage.dart';
 import 'package:lock/screens/Announcements.dart';
+import 'package:lock/screens/Calibration/CalibrationPage.dart';
 import 'package:lock/screens/ContactUs.dart';
 import 'package:lock/screens/Home%20Screen.dart';
+import 'package:lock/screens/MaintainanceScreen.dart';
 import 'package:lock/screens/OpeiningScreen.dart';
 import 'package:lock/screens/Registration%20Screen.dart';
 import 'package:provider/provider.dart';
@@ -43,7 +46,10 @@ class MyApp extends StatelessWidget {
         AnnouncementScreen.id:(context)=>AnnouncementScreen(),
         ContactUsPage.id:(context)=>ContactUsPage(),
         AdminPage.id:(context)=>AdminPage(),
-        OpeningAnimations.id:(context)=>OpeningAnimations()
+        MaintainanceScreen.id:(context)=>MaintainanceScreen(),
+        Rough.id:(context)=>Rough(),
+        OpeningAnimations.id:(context)=>OpeningAnimations(),
+        CalibrationPage.id:(context)=>CalibrationPage(),
       },
     );
   }

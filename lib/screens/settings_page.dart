@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:lock/components/member_service.dart';
 import 'package:lock/constonants.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:lock/screens/Calibration/CalibrationPage.dart';
+import 'package:lock/components/Animations.dart';
 
 class SettingsPage extends StatefulWidget {
   static const String id = 'Settings_Page';
@@ -184,6 +186,28 @@ class _SettingsPageState extends State<SettingsPage> {
                 Divider(
                   color: Colors.black,
                 ),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        FadeToCalibrationRoute(page: CalibrationPage()),
+                      );
+                    },
+                    icon: Icon(Icons.compass_calibration, color: Colors.white),
+                    label: Text("Recalibrate", style: kSettingsElevatedButtonTextStyle),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: kContactUsPageElevatedButtonBkgColor,
+                      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
                 TextField(
                   controller: _feedbackController,
                   textAlign: TextAlign.center,
@@ -197,7 +221,8 @@ class _SettingsPageState extends State<SettingsPage> {
                 SizedBox(height: 10),
 
                 // Send Feedback Button
-                Center(
+                SizedBox(
+                  width: double.infinity,
                   child: ElevatedButton(
                     onPressed: _sendEmail,
                     style: ElevatedButton.styleFrom(
@@ -217,6 +242,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 SizedBox(
                   height: 15,
                 ),
+
                 // ✅ Only show "Manage Members" if the user is an admin
                 if (isAdmin) ...[
                   Text("Manage Members",
@@ -237,7 +263,8 @@ class _SettingsPageState extends State<SettingsPage> {
                     },
                   ),
                   SizedBox(height: 10),
-                  Center(
+                  SizedBox(
+                    width: double.infinity,
                     child: ElevatedButton.icon(
                       onPressed: isAddingMember ? null : _addMember,
                       icon: isAddingMember

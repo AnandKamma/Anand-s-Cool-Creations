@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lock/constonants.dart';
 
 class CustomFloatingActionButton extends StatelessWidget {
   final VoidCallback onPressed;
@@ -8,15 +9,11 @@ class CustomFloatingActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 70, // Custom height
-      width: 70,  // Custom width
+      height: 60, // Custom height
+      width: 60,  // Custom width
       decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: LinearGradient(
-          colors: [Colors.blueAccent, Colors.purpleAccent],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: kTextAndIconColor,
+        borderRadius: BorderRadius.circular(12), // ✅ Rounded rectangle
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.2),
@@ -27,12 +24,10 @@ class CustomFloatingActionButton extends StatelessWidget {
       ),
       child: GestureDetector(
         onTap: onPressed,
-        child: Center(
-          child: Icon(
-            Icons.add,
-            color: Colors.white,
-            size: 30,
-          ),
+        child: Icon(
+          Icons.add,
+          color: Colors.white,
+          size: 30,
         ),
       ),
     );

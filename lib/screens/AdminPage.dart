@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:lock/screens/Home Screen.dart';
 import 'package:lock/components/Registration_service.dart'; // ✅ Import your service class
+import 'package:lock/screens/Calibration/CalibrationPage.dart';
+import 'package:lock/components/Animations.dart'; // your custom fade animation
 
 class AdminPage extends StatefulWidget {
   static const String id = 'AdminPage';
@@ -28,6 +29,7 @@ class _AdminPageState extends State<AdminPage> {
 
   /// ✅ Register House and Save Data
   void showInformationAboutRole(BuildContext context, String Role) {
+    final rootContext = context;
     FocusNode houseIDFocus = FocusNode();
     bool showInputs = false; // Controls what is displayed
 
@@ -311,11 +313,13 @@ class _AdminPageState extends State<AdminPage> {
                                                         .trim(),
                                                     esp32IDController.text
                                                         .trim());
-                                            Navigator.pop(
-                                                context); // ✅ Close modal after success
-                                            Navigator.of(context)
-                                                .pushReplacementNamed(
-                                                    HomeScreen.id);
+                                            if (mounted) Navigator.pop(context);
+                                            // ✅ Wait a moment so modal animation completes cleanly
+                                            Future.delayed(Duration(milliseconds: 250), () {
+                                              if (mounted) {
+                                                Navigator.of(rootContext).push(FadeToCalibrationRoute(page: CalibrationPage()));
+                                              }
+                                            });
                                           } catch (e) {
                                             print("❌ Error: $e");
                                           }

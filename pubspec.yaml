@@ -52,6 +52,7 @@ dependencies:
   url_launcher: ^6.3.1
   shared_preferences: ^2.5.1
   crypto: ^3.0.6
+  cube_transition_plus: ^2.0.1
 
 
 dev_dependencies:
