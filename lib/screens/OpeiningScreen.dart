@@ -163,7 +163,7 @@ class _OpeningAnimationsState extends State<OpeningAnimations>
           ),
           SizedBox(height: 150,),
           Text('From',style: TextStyle(fontSize: 20, fontFamily:'Pacifico'),),
-          Text('BumbleBee',style: TextStyle(fontFamily: 'DancingScript',fontSize: 60),)
+          Text('Ashok Anand',style: TextStyle(fontFamily: 'DancingScript',fontSize: 50),)
         ],
       ),
     );
